@@ -1,43 +1,41 @@
 #!/bin/bash
 # Interface to run shell scripts
 
-versionCheck() {
-  clear
-  echo -e "Run version-check.sh (LFS 2.2 - Host System Requirements)\n"
-  bash src/version-check.sh
-  proceed
-}
+page=0
 
-lfsVariable() {
-  clear
-  echo -e "Run lfs-variable.sh (LFS 2.6 - Setting The \$LFS Variable)\n"
-  bash src/lfs-variable.sh
-  proceed
-}
+options[0]="Run 2.2-version-check.sh (LFS 2.2 - Host System Requirements)"
+options[1]="Run 2.6-lfs-variable.sh (LFS 2.6 - Setting The \$LFS Variable)"
+options[2]="Run 2.7-mount-partition.sh (LFS 2.7 - Mounting the New Partition)"
+options[3]="Run 3.1-download-packages.sh (LFS 3.1 - Introduction)"
+options[4]="Run 3.1-verify-packages.sh (LFS 3.1 - Introduction)"
 
-mountPartition() {
-  clear
-  echo -e "Run mount-partition.sh (LFS 2.7 - Mounting the New Partition)\n"
-  bash src/mount-partition.sh
-  proceed
-}
-
-downloadPackages() {
-  clear
-  echo -e "Run download-packages.sh (LFS 3.1 - Introduction)\n"
-  bash src/download-packages.sh
-  proceed
-}
-
-verifyPackages() {
-  clear
-  echo -e "Run download-packages.sh (LFS 3.1 - Introduction)\n"
-  bash src/verify-packages.sh
-  proceed
-}
+actions[0]="src/2.2-version-check.sh"
+actions[1]="src/2.6-lfs-variable.sh"
+actions[2]="src/2.7-mount-partition.sh"
+actions[3]="src/3.1-download-packages.sh"
+actions[4]="src/3.1-verify-packages.sh"
 
 proceed() {
   read -n 1 -s -r -p $'\n[v] Press any key to continue'
+}
+
+runScript() {
+  clear
+  echo -e "${options[$1]}\n"
+  bash ${actions[$1]}
+  proceed
+}
+
+previousPage() {
+  if [ $page -gt 0 ]; then
+    page=$(expr $page \- 1)
+  fi
+}
+
+nextPage() {
+  if [ $(expr $page \* 5 \+ 5) -lt ${#options[@]} ]; then
+    page=$(expr $page \+ 1)
+  fi
 }
 
 quit() {
@@ -45,26 +43,39 @@ quit() {
   exit
 }
 
-while true
-do
+showPage() {
   clear
-  echo "Point Operating System (point-os) - Development Scripts Interface"
-  echo -e "LFS version 11.0, BLFS version 11.0\n"
+  echo -e "Point Operating System (point-os) - Development Scripts Interface\n"
   echo "Select action:"
-  echo "[1] Run version-check.sh (LFS 2.2 - Host System Requirements)"
-  echo "[2] Run lfs-variable.sh (LFS 2.6 - Setting The \$LFS Variable)"
-  echo "[3] Run mount-partition.sh (LFS 2.7 - Mounting the New Partition)"
-  echo "[4] Run download-packages.sh (LFS 3.1 - Introduction)"
-  echo "[5] Run verify-packages.sh (LFS 3.1 - Introduction)"
+  for ((i = 1; i < 6; i++)); do
+    k=$(expr $page \* 5 \+ $i \- 1)
+    if [ $k -lt ${#options[@]} ]; then
+      echo -e "[$i] ${options[$k]}"
+    fi
+  done
+  echo ""
+
+  if [ $page -gt 0 ]; then
+    echo -e "[p] Previous page"
+  fi
+  if [ $(expr $page \* 5 \+ 5) -lt ${#options[@]} ]; then
+    echo -e "[n] Next page"
+  fi
   echo -e "[q] Exit menu\n"
   read -n 1 answer
 
   case "$answer" in
-    1) versionCheck;;
-    2) lfsVariable;;
-    3) mountPartition;;
-    4) downloadPackages;;
-    5) verifyPackages;;
+    1) runScript $(expr $page \* 5);;
+    2) runScript $(expr $page \* 5 \+ 1);;
+    3) runScript $(expr $page \* 5 \+ 2);;
+    4) runScript $(expr $page \* 5 \+ 3);;
+    5) runScript $(expr $page \* 5 \+ 4);;
+    p) previousPage;;
+    n) nextPage;;
     q) quit;;
   esac
+}
+
+while true; do
+  showPage
 done
