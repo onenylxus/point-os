@@ -10,6 +10,7 @@ options[3]="Run 3.1-download-packages.sh (LFS 3.1 - Introduction)"
 options[4]="Run 3.1-verify-packages.sh (LFS 3.1 - Introduction)"
 options[5]="Run 4.2-directory-layout.sh (LFS 4.2 - Creating a Limited Directory Layout in LFS Filesystem)"
 options[6]="Run 4.3-add-user.sh (LFS 4.3 - Adding the LFS User)"
+options[7]="Run 4.4-setup-environment.sh (LFS 4.4 - Setting Up the Environment)"
 
 actions[0]="src/2.2-version-check.sh"
 actions[1]="src/2.6-lfs-variable.sh"
@@ -18,6 +19,7 @@ actions[3]="src/3.1-download-packages.sh"
 actions[4]="src/3.1-verify-packages.sh"
 actions[5]="src/4.2-directory-layout.sh"
 actions[6]="src/4.3-add-user.sh"
+actions[7]="src/4.4-setup-environment.sh"
 
 proceed() {
   read -n 1 -s -r -p $'\n[v] Press any key to continue'
